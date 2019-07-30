@@ -1,4 +1,4 @@
-package cn.mokier.soullaggremover.clearhostile;
+package cn.mokier.soullaggremover.clearblock;
 
 import cn.mokier.soullaggremover.Utils.Chat;
 import com.google.common.reflect.TypeToken;
@@ -15,26 +15,24 @@ import java.util.Optional;
 @Getter
 class SettingsNode {
 
-    //检测间隔  单位：分
+    //检测间隔  单位：秒
     private int interval;
-    //是否清理带有显示名的怪物
-    private boolean isClearDisplayNameEntity;
-    //清理需要达到的数量
-    private int maxLimit;
+    //在间隔内刷新次数达到这个量后将被清理
+    private int maxChange;
     //运行的世界
     private List<World> worlds;
-    //清理白名单
-    private List<String> whiteList;
+    //清理的方块
+    private List<String> clearBlock;
 
     public SettingsNode(ConfigurationNode configurationNode) {
         interval = configurationNode.getNode("interval").getInt();
-        isClearDisplayNameEntity = configurationNode.getNode("isClearDisplayNameEntity").getBoolean();
-        maxLimit = configurationNode.getNode("maxLimit").getInt();
+        maxChange = configurationNode.getNode("maxChange").getInt();
+
 
         try {
-            whiteList =  configurationNode.getNode("whiteList").getList(TypeToken.of(String.class));
+            clearBlock =  configurationNode.getNode("clearBlock").getList(TypeToken.of(String.class));
         } catch (ObjectMappingException e) {
-            Chat.sendLangLoggerError("clearHostiles.error-settings-whitelist", false);
+            Chat.sendLangLoggerError("clearBlock.error-settings-clearBlock", false);
         }
 
         try {
@@ -50,9 +48,8 @@ class SettingsNode {
                 }
             }
         } catch (ObjectMappingException e) {
-            Chat.sendLangLoggerError("clearHostiles.error-settings-worlds", false);
+            Chat.sendLangLoggerError("clearBlock.error-settings-worlds", false);
         }
-
     }
 
 

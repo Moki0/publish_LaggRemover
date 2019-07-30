@@ -3,13 +3,16 @@ package cn.mokier.soullaggremover.clearhostile;
 import cn.mokier.soullaggremover.SoulLaggRemover;
 import cn.mokier.soullaggremover.Utils.Chat;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Hostile;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class ClearHostiles {
@@ -38,11 +41,12 @@ public class ClearHostiles {
         //检测需要被清理的生物
         for(World world : settingsNode.getWorlds()) {
             for(Entity entity : world.getEntities()) {
-                if(entity instanceof Hostile && !isWhiteList(entity.getType().getId())) {
+                if(entity instanceof Hostile && isClearByWhiteList(entity) && isClearByDisplayName(entity)) {
                     clearEntity.add(entity);
                 }
             }
         }
+
         //检测是否大于限制
         if(clearEntity.size()>settingsNode.getMaxLimit()) {
             for(Entity entity : clearEntity) {
@@ -59,19 +63,29 @@ public class ClearHostiles {
         settingsNode = new SettingsNode(instance.getConfig().getConfigurationNode().getNode("clearHostiles"));
     }
 
-    private boolean isWhiteList(String type) {
+    private boolean isClearByDisplayName(Entity entity) {
+        if(!settingsNode.isClearDisplayNameEntity()) {
+            Optional<Text> displayName = entity.get(Keys.DISPLAY_NAME);
+
+            return !displayName.isPresent();
+        }
+        return true;
+    }
+
+    private boolean isClearByWhiteList(Entity entity) {
+        String type = entity.getType().getId();
         for(String key : settingsNode.getWhiteList()) {
             if(key.contains("[all]")) {
                 if(type.equalsIgnoreCase(key.split("\\[all]")[1])) {
-                    return true;
+                    return false;
                 }
             }else if(key.contains("[contains]")) {
                 if(type.contains(key.split("\\[contains]")[1])) {
-                    return true;
+                    return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 }

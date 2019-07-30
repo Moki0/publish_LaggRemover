@@ -3,6 +3,7 @@ package cn.mokier.soullaggremover;
 import cn.mokier.soullaggremover.Utils.Chat;
 import cn.mokier.soullaggremover.clearhostile.ClearHostiles;
 import cn.mokier.soullaggremover.clearitem.ClearItems;
+import cn.mokier.soullaggremover.clearblock.ClearBlock;
 import cn.mokier.soullaggremover.commands.CommandManager;
 import cn.mokier.soullaggremover.configurations.Config;
 import cn.mokier.soullaggremover.configurations.Lang;
@@ -33,6 +34,7 @@ public class SoulLaggRemover {
     private CommandManager commandManager;
     private ClearItems clearItems;
     private ClearHostiles clearHostiles;
+    private ClearBlock clearBlock;
 
     @Inject
     public SoulLaggRemover(@ConfigDir(sharedRoot = false) Path path, Logger logger) {
@@ -63,6 +65,9 @@ public class SoulLaggRemover {
         if(configurationNode.getNode("clearHostiles").getBoolean()) {
             clearHostiles = new ClearHostiles(this);
         }
+        if(configurationNode.getNode("clearBlock").getBoolean()) {
+            clearBlock = new ClearBlock(this);
+        }
     }
 
     /**
@@ -73,5 +78,6 @@ public class SoulLaggRemover {
         lang.reload();
         clearItems.reloadConfig();
         clearHostiles.reloadConfig();
+        clearBlock.reloadConfig();
     }
 }
