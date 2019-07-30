@@ -3,7 +3,6 @@ package cn.mokier.soullaggremover.clearitem;
 import cn.mokier.soullaggremover.SoulLaggRemover;
 import cn.mokier.soullaggremover.Utils.Chat;
 import lombok.Getter;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
@@ -21,23 +20,31 @@ public class ClearItems {
 
     private SoulLaggRemover instance;
     private SettingsNode settingsNode;
-    private RunnableClear runnableClear;
-    private RunnableClearWarning runnableClearWarning;
+    private Task.Builder runnableClear;
+    private Task.Builder runnableClearWarning;
 
     public ClearItems(SoulLaggRemover instance) {
         this.instance = instance;
-        settingsNode = new SettingsNode(instance.getConfig().getConfigurationNode().getNode("clearItems"));
-        runnableClear = new RunnableClear(this);
-        runnableClearWarning = new RunnableClearWarning(this);
 
-        Task.Builder builder = Sponge.getScheduler().createTaskBuilder();
-        builder.execute(runnableClear)
+        runnableClear = Task.builder().execute(new RunnableClear(this));
+        runnableClearWarning = Task.builder().execute(new RunnableClearWarning(this));
+
+        reloadConfig();
+    }
+
+    public void reloadConfig() {
+        settingsNode = new SettingsNode(instance.getConfig().getConfigurationNode().getNode("clearItems"));
+
+        runnableClear.reset();
+        runnableClearWarning.reset();
+
+        runnableClear
                 .async()
                 .delay(settingsNode.getInterval(),TimeUnit.MINUTES)
                 .interval(settingsNode.getInterval(), TimeUnit.MINUTES)
                 .name("SoulLaggRemover items clear")
                 .submit(instance);
-        builder.execute(runnableClearWarning)
+        runnableClearWarning
                 .async()
                 .delay(1,TimeUnit.SECONDS)
                 .interval(1, TimeUnit.SECONDS)
@@ -79,9 +86,6 @@ public class ClearItems {
         runnableClearWarning.stateClearWarning();
     }
 
-    public void reloadConfig() {
-        settingsNode = new SettingsNode(instance.getConfig().getConfigurationNode().getNode("clearItems"));
-    }
 
     private boolean isWhiteList(String type) {
         System.out.println(settingsNode.getWhiteList());
