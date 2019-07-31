@@ -6,9 +6,7 @@ import com.flowpowered.math.vector.Vector3i;
 import lombok.Getter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.World;
 

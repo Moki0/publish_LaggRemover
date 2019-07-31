@@ -14,18 +14,18 @@ public class CommandManager {
 
         CommandSpec clearHostile = CommandSpec.builder()
                 .description(Text.of("SoulClear command"))
-                .permission("soulClear.clearHostile")
+                .permission("soulLaggRemover.clearHostile")
                 .executor(new ClearHostile(instance))
                 .build();
         CommandSpec clearItem = CommandSpec.builder()
                 .description(Text.of("SoulClear command"))
-                .permission("soulClear.clearItem")
+                .permission("soulLaggRemover.clearItem")
                 .executor(new ClearItem(instance))
                 .build();
 
         CommandSpec reload = CommandSpec.builder()
                 .description(Text.of("SoulClear command"))
-                .permission("soulClear.reload")
+                .permission("soulLaggRemover.reload")
                 .executor(new Reload(instance))
                 .build();
 
